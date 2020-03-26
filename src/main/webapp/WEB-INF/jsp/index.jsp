@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,7 +70,12 @@ thead tr {height: 40px;}
 				</td>
 				<td style="text-align: center;">페이징부</td>
 				<td style="text-align: right;">
-					<button onclick="location.href='/write'">글쓰기</button>
+					<c:if test="${empty sessionScope.loginUser}">
+						
+					</c:if>
+					<c:if test="${!empty sessionScope.loginUser}">
+						<button onclick="location.href='/write'">글쓰기</button>
+					</c:if>
 				</td>
 			</tr>
 		</table>

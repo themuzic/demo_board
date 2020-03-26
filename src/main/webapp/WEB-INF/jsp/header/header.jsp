@@ -11,6 +11,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- alertify.js -->
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
 <!-- CSS -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
 <!-- Default theme -->
@@ -18,6 +19,12 @@
 <!-- Semantic UI theme -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
 
+<link rel="stylesheet" href="semantic/form.css">
+<link rel="stylesheet" href="semantic/semantic.css">
+<script src="semantic/semantic.js"></script>
+<script src="semantic/form.js"></script>
+<script src="semantic/index.js"></script>
+<script src="semantic/package.js"></script>
 <style>
 #header {padding:50px 20px 0px 20px;}
 #sign-div {width: 57%; margin: auto; text-align: right; font-size: 15px;}

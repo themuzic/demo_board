@@ -7,12 +7,12 @@
 <title>Insert title here</title>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<link rel="stylesheet" href="semantic/form.css">
+<!-- <link rel="stylesheet" href="semantic/form.css">
 <link rel="stylesheet" href="semantic/semantic.css">
 <script src="semantic/semantic.js"></script>
 <script src="semantic/form.js"></script>
 <script src="semantic/index.js"></script>
-<script src="semantic/package.js"></script>
+<script src="semantic/package.js"></script> -->
 
 <style>
 .hide{display: none !important;}
