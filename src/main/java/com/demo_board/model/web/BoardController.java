@@ -14,25 +14,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.demo_board.model.domain.AttachFileRepository;
 import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
 import com.demo_board.model.domain.ImgFile;
 import com.demo_board.model.domain.ImgFileRepository;
 import com.demo_board.model.domain.Reply;
 import com.demo_board.model.domain.ReplyRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
 
 @Controller
 public class BoardController {
 	
 	@Autowired
 	private BoardRepository boardRepository;
-	@Autowired
-	private AttachFileRepository attachFileRepository;
 	@Autowired
 	private ImgFileRepository imgFileRepository;
 	@Autowired
@@ -64,13 +65,30 @@ public class BoardController {
 		};
 	}
 	
+	@ResponseBody
+	@PostMapping("/getReplyList")
+	public String getReplyList(Board board) {
+		System.out.println("댓글 가지러 들어옴");
+		List<Reply> replyList = replyRepository.findBybNo(board.getBNo());
+		System.out.println(replyList);
+		
+		Gson gson = new Gson();
+		return gson.toJson(replyList);
+	}
+	
+	@ResponseBody
+	@PostMapping("/addReply")
+	public String addReply(Reply reply) {
+		System.out.println(reply);
+		Reply r = replyRepository.save(reply);
+		if(r != null) return "success";
+		else return "fail";
+	}
+	
 	@PostMapping("/view")
 	public ModelAndView veiwDetail(ModelAndView mv, Board board) {
 		Optional<Board> b = boardRepository.findById(board.getBNo());
-		List<Reply> replyList = replyRepository.findBybNo(board.getBNo());
 		mv.addObject("board", b.get());
-		mv.addObject("replyList", replyList);
-		mv.addObject("replyCount", replyList.size());
 		mv.setViewName("/board/board-view-form");
 		return mv;
 	}

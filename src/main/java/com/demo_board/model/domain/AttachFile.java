@@ -1,6 +1,7 @@
 package com.demo_board.model.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,9 +46,9 @@ public class AttachFile {
 	@Column(nullable = false, name = "change_name")
 	private String changeName;
 	@Column(nullable = false, name = "f_date")
-	private LocalDate fDate;
+	private LocalDateTime fDate;
 	@Column(nullable = false, name = "f_modify_date")
-	private LocalDate fModifyDate;
+	private LocalDateTime fModifyDate;
 	@Column(nullable = false, name = "f_status")
 	private String fStatus;
 	
@@ -61,8 +61,10 @@ public class AttachFile {
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
-		this.fDate = LocalDate.now();
-		this.fModifyDate = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();  
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		this.fDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.fModifyDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		this.fStatus = "Y";
 	}
 }

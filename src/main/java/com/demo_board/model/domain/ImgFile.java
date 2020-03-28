@@ -1,6 +1,7 @@
 package com.demo_board.model.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,7 +44,7 @@ public class ImgFile {
 	@Column(nullable = false, name = "change_img_name")
 	private String changeImgName;
 	@Column(nullable = false, name = "img_date")
-	private LocalDate imgDate;
+	private LocalDateTime imgDate;
 	@Column(nullable = false, name = "img_status")
 	private String imgStatus;
 	
@@ -56,7 +57,9 @@ public class ImgFile {
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
-		this.imgDate = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();  
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		this.imgDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		this.imgStatus = "Y";
 	}
 	

@@ -1,6 +1,7 @@
 package com.demo_board.model.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class Board {
 	@Lob
 	private String bContent;
 	@Column(nullable = false, name="b_date")
-	private LocalDate bDate;
+	private LocalDateTime bDate;
 	@Column(nullable = false, name="b_file")
 	private String bFile;
 	@Column(nullable = false, name="b_like")
@@ -67,7 +68,9 @@ public class Board {
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
-		this.bDate = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();  
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		this.bDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		this.bFile = this.bFile == null ? "N" : "Y";
 		this.bLike = this.bLike == null ? 0 : this.bLike;
 		this.bViewCnt = 0l;

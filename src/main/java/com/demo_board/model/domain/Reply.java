@@ -1,6 +1,7 @@
 package com.demo_board.model.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,15 +46,15 @@ public class Reply {
 	@Column(nullable = false, name = "r_content")
 	private String rContent;
 	@Column(nullable = false, name = "r_date")
-	private LocalDate rDate;
+	private LocalDateTime rDate;
 	@Column(nullable = false, name = "r_status")
 	private String rStatus;
 	@Column(nullable = false, name = "r_level")
 	private int rLevel;
 	@Column(name = "rr_no")
-	private Long rr_no;
+	private Long rrNo;
 	
-	public Reply(Long bNo, Long wId, String wName, String rContent, LocalDate rDate, String rStatus,
+	public Reply(Long bNo, Long wId, String wName, String rContent, LocalDateTime rDate, String rStatus,
 			int rLevel) {
 		super();
 		this.bNo = bNo;
@@ -67,7 +68,9 @@ public class Reply {
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
-		this.rDate = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();  
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		this.rDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		this.rStatus = "Y";
 	}
 	

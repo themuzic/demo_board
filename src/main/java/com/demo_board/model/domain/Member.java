@@ -1,6 +1,7 @@
 package com.demo_board.model.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,8 +53,8 @@ public class Member {
 	@Column(nullable = false)
 	private String status;
 	@Column(nullable = false)
-	private LocalDate enroll_date;
-	private LocalDate out_date;
+	private LocalDateTime enroll_date;
+	private LocalDateTime out_date;
 	
 	public Member(String email, String pwd, String name, String birth, String phone, String gender, String base) {
 		super();
@@ -69,7 +70,9 @@ public class Member {
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
 		this.status = "Y";
-		this.enroll_date = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();  
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		this.enroll_date = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		System.out.println(this);
 	}
 }
