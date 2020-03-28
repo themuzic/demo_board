@@ -11,7 +11,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!-- alertify.js -->
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<!-- summernote 에디터 -->
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css"	rel="stylesheet">
+<script	src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
+<script	src="https://github.com/summernote/summernote/tree/master/lang/summernote-ko-KR.js"></script>
 <!-- CSS -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
 <!-- Default theme -->
@@ -21,13 +27,15 @@
 
 <link rel="stylesheet" href="semantic/form.css">
 <link rel="stylesheet" href="semantic/semantic.css">
-<script src="semantic/semantic.js"></script>
-<script src="semantic/form.js"></script>
-<script src="semantic/index.js"></script>
-<script src="semantic/package.js"></script>
+<!-- <script src="semantic/semantic.js"></script> -->
+<!-- <script src="semantic/form.js"></script> -->
+<!-- <script src="semantic/index.js"></script> -->
+<!-- <script src="semantic/package.js"></script> -->
 <style>
+.fl {float: left;}
+.fr {float: right;}
 #header {padding:50px 20px 0px 20px;}
-#sign-div {width: 57%; margin: auto; text-align: right; font-size: 15px;}
+#sign-div {width: 65%; margin: auto; text-align: right; font-size: 15px;}
 .hb:hover{color: blue; cursor: pointer;}
 #login-wrap {
 	border: 1px solid rgba(34, 36, 38, 0.15);
@@ -36,7 +44,7 @@
 	z-index: 10000;
 	background: white;
 	padding: 15px;
-	right: 21%;
+	right: 16%;
     top: 18%;
     display: none;
 	}
@@ -45,6 +53,7 @@
 	background: white;
 	text-align: center;
 }
+a {text-decoration: none;}
 </style>
 </head>
 <body>
@@ -67,7 +76,7 @@
 						<div class="field" style="margin-bottom: 5px;">
 						    <div class="fields" style="margin-bottom: 0;">
 						    	<div class="field">
-						        	<input type="text" name="pwd" class="sign" placeholder="Password" style="height: 36px;">
+						        	<input type="password" name="pwd" class="sign" placeholder="Password" style="height: 36px;">
 						    	</div>
 						    </div>
 					    </div>

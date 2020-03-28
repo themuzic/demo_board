@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 
@@ -34,38 +35,42 @@ public class Board {
 			strategy = GenerationType.SEQUENCE,		// 사용할 전략을 시퀀으로 선택
 			generator = "BOARD_SEQ_GEN"				// 식별자 생성기를 만들어 놓은 시퀀스 제네레이터로 설정
 			)
-	private Long b_no;
-	@Column(nullable = false)
-	private String b_title;
-	@Column(nullable = false)
-	private Long w_id;
-	@Column(nullable = false)
-	private String w_name;
-	@Column(nullable = false)
-	private String b_content;
-	@Column(nullable = false)
-	private LocalDate b_date;
-	@Column(nullable = false)
-	private String b_file;
-	@Column(nullable = false)
-	private Long b_like;
-	@Column(nullable = false)
-	private String b_status;
+	@Column(name="b_no")
+	private Long bNo;
+	@Column(nullable = false, name="b_title")
+	private String bTitle;
+	@Column(nullable = false, name="w_id")
+	private Long wId;
+	@Column(nullable = false, name="w_name")
+	private String wName;
+	@Column(nullable = false, name="b_content")
+	@Lob
+	private String bContent;
+	@Column(nullable = false, name="b_date")
+	private LocalDate bDate;
+	@Column(nullable = false, name="b_file")
+	private String bFile;
+	@Column(nullable = false, name="b_like")
+	private Long bLike;
+	@Column(nullable = false, name="b_view_cnt")
+	private Long bViewCnt;
+	@Column(nullable = false, name="b_status")
+	private String bStatus;
 	
-	public Board(Long b_no, String b_title, Long w_id, String w_name, String b_content) {
+	public Board(String bTitle, Long wId, String wName, String bContent) {
 		super();
-		this.b_no = b_no;
-		this.b_title = b_title;
-		this.w_id = w_id;
-		this.w_name = w_name;
-		this.b_content = b_content;
+		this.bTitle = bTitle;
+		this.wId = wId;
+		this.wName = wName;
+		this.bContent = bContent;
 	}
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
-		this.b_date = LocalDate.now();
-		this.b_file = this.b_file == null ? "N" : "Y";
-		this.b_like = this.b_like == null ? 0 : this.b_like;
-		this.b_status = "Y";
+		this.bDate = LocalDate.now();
+		this.bFile = this.bFile == null ? "N" : "Y";
+		this.bLike = this.bLike == null ? 0 : this.bLike;
+		this.bViewCnt = 0l;
+		this.bStatus = "Y";
 	}
 }
