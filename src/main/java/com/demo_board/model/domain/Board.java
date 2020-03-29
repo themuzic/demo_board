@@ -70,7 +70,7 @@ public class Board {
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.bDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.bDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
 		this.bFile = this.bFile == null ? "N" : "Y";
 		this.bLike = this.bLike == null ? 0 : this.bLike;
 		this.bViewCnt = 0l;

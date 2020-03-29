@@ -28,7 +28,7 @@
 			<label>내용</label><br>
 			<textarea id="summernote" class="summernote" name="bContent" value=""></textarea>
 			<div align="center">
-				<div class="ui button" id="write-submit-btn" tabindex="0">Write</div>
+				<div class="ui primary button" id="write-submit-btn" tabindex="0">Write</div>
 				<div class="ui button" id="write-cancel-btn" tabindex="0">Cancel</div>
 			</div>
 		</form>

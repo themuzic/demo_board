@@ -1,6 +1,7 @@
 package com.demo_board.model.web;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +32,6 @@ import com.demo_board.model.domain.Reply;
 import com.demo_board.model.domain.ReplyRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
 
 @Controller
 public class BoardController {
@@ -51,7 +55,6 @@ public class BoardController {
 	
 	@PostMapping("/update")
 	public String update(HttpServletRequest request, Board board) {
-		int result = boardRepository.updateBTitleAndBContent(board);
 		return "/index";
 	}
 	
@@ -65,15 +68,12 @@ public class BoardController {
 		};
 	}
 	
-	@ResponseBody
 	@PostMapping("/getReplyList")
-	public String getReplyList(Board board) {
-		System.out.println("댓글 가지러 들어옴");
+	public void getReplyList(Board board, HttpServletResponse response) throws JsonIOException, IOException {
 		List<Reply> replyList = replyRepository.findBybNo(board.getBNo());
-		System.out.println(replyList);
-		
+		response.setContentType("application/json; charset=utf-8");
 		Gson gson = new Gson();
-		return gson.toJson(replyList);
+		gson.toJson(replyList, response.getWriter());
 	}
 	
 	@ResponseBody
@@ -91,6 +91,12 @@ public class BoardController {
 		mv.addObject("board", b.get());
 		mv.setViewName("/board/board-view-form");
 		return mv;
+	}
+	
+	@GetMapping("/paging")
+	public Page<Board> boardsPaging(int pageNum) {
+		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "bDate");
+	    return boardRepository.findAll(pageable);
 	}
 	
 	@PostMapping("/upload")

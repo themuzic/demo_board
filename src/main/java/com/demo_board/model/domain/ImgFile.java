@@ -59,7 +59,7 @@ public class ImgFile {
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.imgDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.imgDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
 		this.imgStatus = "Y";
 	}
 	

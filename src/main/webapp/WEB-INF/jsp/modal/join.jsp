@@ -43,7 +43,7 @@
 </head>
 <body>
 
-	<div id="join-layer" class="join-wrap hide">	
+	<div class="join-wrap wrap hide">	
 		<div class="join-modal" id="layerDealInformation" style="display: block; border-radius: 12px;">
 			<form class="ui form" id="join-form" action="/join" method="post">
 				<h4 class="ui dividing header" style="padding-bottom: 1em;">Sign Up</h4>
@@ -58,20 +58,20 @@
 				</div>
 				<div class="two fields">
 					<div class="field">
-						<label>Password</label> <input type="password" id="pwd" name="pwd" placeholder="8~16 characters">
+						<label>Password</label> <input type="password" name="pwd" placeholder="8~16 characters">
 						<label id="pwdIsUseble"></label>
 					</div>
 					<div class="field">
-						<label>Confirm</label> <input type="password" id="pwdC" name="pwdC" placeholder="Confirm">
+						<label>Confirm</label> <input type="password" name="pwdC" placeholder="Confirm">
 						<label id="pwdIsUsebleC"></label>
 					</div>
 				</div>
 				<div class="two fields">
 					<div class="field">
-						<label>Name</label> <input type="text" id="name" name="name" placeholder="Name">
+						<label>Name</label> <input type="text" name="name" placeholder="Name">
 					</div>
 					<div class="field">
-						<label>Birth</label> <input type="text" id="birth" name="birth" placeholder="YYYY-MM-DD">
+						<label>Birth</label> <input type="text" name="birth" placeholder="YYYY-MM-DD">
 					</div>
 				</div>
 				<div class="two fields">

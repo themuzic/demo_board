@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,7 +65,7 @@ thead tr {height: 45px;}
 								</c:if>
 							</td>
 							<td>${board.WName}</td>
-							<td>${board.BDate}</td>
+							<td>${fn:replace(board.BDate,"T"," ")}</td>
 							<td>${board.BLike}</td>
 							<td>${board.BViewCnt}</td>
 						</tr>
@@ -92,7 +93,11 @@ thead tr {height: 45px;}
 					</select>
 					<input type="text" id="search-keyword" class="fl" size="10">
 				</td>
-				<td style="text-align: center;">페이징부</td>
+				<td style="text-align: center;">
+				페이징부
+				
+				
+				</td>
 				<td style="text-align: right;">
 					<c:if test="${empty sessionScope.loginUser}">
 						
@@ -106,6 +111,7 @@ thead tr {height: 45px;}
 	</div>
 	
 	<jsp:include page="modal/join.jsp"/>
+	<jsp:include page="modal/update.jsp"/>
 
 </body>
 
@@ -114,6 +120,11 @@ thead tr {height: 45px;}
 	$(document).on('click','#signUp',function(){
 		$("#login-wrap").css("display","none");
 		$(".join-wrap").addClass("show");
+	});
+	// 회원정보수정 버튼 누르면
+	$(document).on('click','#modify',function(){
+		$("#login-wrap").css("display","none");
+		$(".update-wrap").addClass("show");
 	});
 	
 	// 로그인 버튼 누르면
@@ -124,7 +135,7 @@ thead tr {height: 45px;}
 	
 	// 회원가입 모달 x 누르면
 	$(document).on('click','.closeBtn',function(){
-		$(".join-wrap").removeClass("show");
+		$(".wrap").removeClass("show");
 	});
 	
 	function viewDetail(b_no) {
@@ -134,6 +145,17 @@ thead tr {height: 45px;}
 		f.method = "post";
 		f.submit();
 	}
+	
+	$(function(){
+		console.log('boardList: '+'${boardList}');
+		console.log('prevPage: '+'${prevPage}');
+		console.log('nextPage: '+'${nextPage}');
+		console.log('getNumber: '+'${getNumber}');
+		console.log('getNumberOfElements: '+'${getNumberOfElements}');
+		console.log('getSize: '+'${getSize}');
+		console.log('isFirst: '+'${isFirst}');
+		console.log('isLast: '+'${isLast}');
+	});
 	
 </script>
 

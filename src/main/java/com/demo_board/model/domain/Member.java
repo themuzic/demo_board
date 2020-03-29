@@ -72,7 +72,7 @@ public class Member {
 		this.status = "Y";
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.enroll_date = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.enroll_date = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
 		System.out.println(this);
 	}
 }

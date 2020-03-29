@@ -70,7 +70,7 @@ public class Reply {
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.rDate = LocalDateTime.parse(now.format(dateTimeFormatter),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		this.rDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
 		this.rStatus = "Y";
 	}
 	
