@@ -9,23 +9,52 @@
 <title>Demo_Board</title>
 
 <style type="text/css">
-#outer, #footer {padding: 20px 50px 20px 50px;}
+#outer, #footer {padding: 10px 50px 10px 50px;}
 #board, #board td, #board th {
 	border-collapse: collapse;
-	border: 1px solid black;
+}
+#board th {background: #f9f9f9;}
+#board tr {
+	border-top: 1px solid #f9f9f9;
+	border-bottom: 1px solid #f9f9f9;
 }
 #board td, #board th {text-align: center;}
+#board a {color: black;}
+#board a:hover {text-decoration: underline;}
 table {	
 	width: 70%;
 	margin: auto;
-	}
+}
 thead tr {height: 45px;}
 #bottom, #bottom td {
 	border-collapse: collapse;
-	border: 1px solid black;
+	border: 1px solid #f9f9f9;
 }
-#bottom tr {height: 30px;}
+#bottom tr {
+	height: 40px;
+	background-color: #f9f9f9;
+}
+#bottom a {
+	display: inline-block;
+	color: black;
+	margin: 0 2px;
+}
+#bottom a:hover {
+	text-decoration: underline;
+}
 #board-body td {height: 35px;}
+.pages{
+	width: 24px;
+    height: 24px;
+    line-height: 24px;
+    box-sizing: border-box;
+}
+.currentPage {
+	border: 1px solid;
+	border-color: #e5e5e5;
+    background-color: #fff;
+    color: #03c75a;
+}
 </style>
 
 </head>
@@ -35,8 +64,8 @@ thead tr {height: 45px;}
 		<table id="board">
 			<colgroup>
 				<col style="width: 10%;">
-				<col style="width: 45%;">
-				<col style="width: 13%;">
+				<col style="width: 47%;">
+				<col style="width: 11%;">
 				<col style="width: 16%;">
 				<col style="width: 8%;">
 				<col style="width: 8%;">
@@ -74,6 +103,7 @@ thead tr {height: 45px;}
 			</tbody>
 		</table>		
 	</div>
+	
 	<div id="footer">
 		<form name="viewDetailForm">
 			<input type="hidden" name="bNo">
@@ -86,24 +116,45 @@ thead tr {height: 45px;}
 			</colgroup>
 			<tr>
 				<td>
-					<select id="search-select" class="fl">
-						<option value="title">제목</option>
-						<option value="writer">작성자</option>
-						<option value="content">내용</option>
-					</select>
-					<input type="text" id="search-keyword" class="fl" size="10">
+					<div class="field fl">
+						<select id="search-select" name="condition1" class="ui fluid dropdown fl" 
+							style="height: 35px; margin-left: 3px; border-right: 0;">
+							<option value="title">제목</option>
+							<option value="writer">작성자</option>
+							<option value="content">내용</option>
+						</select>
+					</div>
+					<div class="ui small icon input fr" style="width: 120px;">
+					  <input type="text" name="condition2" style="height: 35px; border-radius: 0;">
+					  <i class="search icon searchIcon" style="pointer-events: auto; cursor: pointer;"></i>
+					</div>
 				</td>
 				<td style="text-align: center;">
-				페이징부
-				
-				
+					<c:if test="${isFirst eq false}">
+						<c:url value="/paging" var="paging">
+							<c:param name="pageNum" value="${getNumber-1}"/>
+						</c:url>
+						<a href="${paging}">〈 이전</a>
+					</c:if>
+					<c:forEach var="index" begin="${startPage}" end="${lastPage}">
+						<c:url value="/paging" var="paging">
+							<c:param name="pageNum" value="${index-1}"/>
+						</c:url>
+						<a href="${paging}" class="pages">${index}</a>
+					</c:forEach>
+					<c:if test="${isLast eq false}">
+						<c:url value="/paging" var="paging">
+							<c:param name="pageNum" value="${getNumber+1}"/>
+						</c:url>
+						<a href="${paging}" class="">다음 〉</a>
+					</c:if>
 				</td>
 				<td style="text-align: right;">
 					<c:if test="${empty sessionScope.loginUser}">
 						
 					</c:if>
 					<c:if test="${!empty sessionScope.loginUser}">
-						<button onclick="location.href='/write'">글쓰기</button>
+						<button onclick="location.href='/write'" class="mini ui primary button" style="font-size: 12px;">Write</button>
 					</c:if>
 				</td>
 			</tr>
@@ -138,6 +189,15 @@ thead tr {height: 45px;}
 		$(".wrap").removeClass("show");
 	});
 	
+	// 현재 페이지 표시
+	$(function(){
+		$('#bottom a').each(function(){
+			if($(this).text() == '${getNumber+1}'){
+				$(this).addClass('currentPage');
+			}
+		});
+	});
+	
 	function viewDetail(b_no) {
 		var f = document.viewDetailForm;
 		f.bNo.value = b_no;
@@ -145,7 +205,7 @@ thead tr {height: 45px;}
 		f.method = "post";
 		f.submit();
 	}
-	
+	/* 
 	$(function(){
 		console.log('boardList: '+'${boardList}');
 		console.log('prevPage: '+'${prevPage}');
@@ -156,7 +216,7 @@ thead tr {height: 45px;}
 		console.log('isFirst: '+'${isFirst}');
 		console.log('isLast: '+'${isLast}');
 	});
-	
+	 */
 </script>
 
 </html>

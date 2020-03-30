@@ -1,7 +1,6 @@
 package com.demo_board.model.web;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -12,10 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +25,7 @@ import com.demo_board.model.domain.ImgFile;
 import com.demo_board.model.domain.ImgFileRepository;
 import com.demo_board.model.domain.Reply;
 import com.demo_board.model.domain.ReplyRepository;
+import com.demo_board.model.service.BoardService;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 
@@ -42,6 +38,8 @@ public class BoardController {
 	private ImgFileRepository imgFileRepository;
 	@Autowired
 	private ReplyRepository replyRepository;
+	@Autowired
+	private BoardService boardService;
 	
 	@GetMapping("/write")
 	public String writeForm(){
@@ -94,9 +92,10 @@ public class BoardController {
 	}
 	
 	@GetMapping("/paging")
-	public Page<Board> boardsPaging(int pageNum) {
-		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "bDate");
-	    return boardRepository.findAll(pageable);
+	public ModelAndView boardsPaging(int pageNum, ModelAndView mv) {
+		mv = boardService.boardPaging(pageNum, mv);
+		mv.setViewName("index");
+		return mv;
 	}
 	
 	@PostMapping("/upload")

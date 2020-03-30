@@ -9,9 +9,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <style>
-#write-outer {
-	padding: 20px 28% 20px 28%;
-	}
+#write-outer {padding: 10px 28% 20px 28%;}
 </style>
 
 </head>

@@ -27,6 +27,7 @@
 
 <link rel="stylesheet" href="semantic/form.css">
 <link rel="stylesheet" href="semantic/semantic.css">
+<link rel="stylesheet" href="semantic/icon.css">
 <!-- <script src="semantic/semantic.js"></script> -->
 <!-- <script src="semantic/form.js"></script> -->
 <!-- <script src="semantic/index.js"></script> -->

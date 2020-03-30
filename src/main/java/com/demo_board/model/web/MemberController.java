@@ -1,8 +1,6 @@
 package com.demo_board.model.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +23,7 @@ import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
 import com.demo_board.model.domain.Member;
 import com.demo_board.model.domain.MemberRepository;
+import com.demo_board.model.service.BoardService;
 
 @SessionAttributes("loginUser")
 @Controller
@@ -34,19 +33,12 @@ public class MemberController {
 	private MemberRepository memberRepository; 
 	@Autowired
 	private BoardRepository boardRepository;
+	@Autowired
+	private BoardService boardService;
 	
 	@GetMapping("/")
 	public ModelAndView index(ModelAndView mv) {
-		Pageable pageable = PageRequest.of(0, 10, Direction.DESC, "bDate");
-		Page<Board> boardList = boardRepository.findAll(pageable);
-		mv.addObject("boardList", boardList.getContent());
-		mv.addObject("prevPage", boardList.previousPageable());
-		mv.addObject("nextPage", boardList.nextPageable());
-		mv.addObject("getNumber", boardList.getNumber());
-		mv.addObject("getNumberOfElements", boardList.getNumberOfElements());
-		mv.addObject("getSize", boardList.getSize());
-		mv.addObject("isFirst", boardList.isFirst());
-		mv.addObject("isLast", boardList.isLast());
+		mv = boardService.boardPaging(0, mv);
 		mv.setViewName("index");
 		return mv;
 	}

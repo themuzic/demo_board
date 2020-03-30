@@ -11,13 +11,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <style>
-#write-outer {padding: 20px 28% 20px 28%;}
+#write-outer {padding: 10px 28% 20px 28%;}
 #board-view-form p {
 	font-family: "맑은고딕";
 	font-size: 15px;
 	line-height: 1.6;
 	}
 .ui.comments {max-width: 100% !important;}
+.nameLine {
+	line-height: 30px;
+    font-weight: 100;
+    font-size: 13px;
+}
+.mr20 {margin-right: 20px;}
+.likeSpan {
+	border: solid 1px;
+	border-color: rgba(34, 36, 38, 0.15);
+}
+.likeSpan:hover{
+	cursor: pointer;
+	border-color: red;
+}
+.likeGray {color: rgba(34, 36, 38, 0.15);}
+.likeRed {color: red;}
+.likeBlack {
+	color: black;
+	font-weight: 100;
+	}
 </style>
 
 </head>
@@ -29,91 +49,18 @@
 			<input type="hidden" name="wId" value="${loginUser.id}">
 			<input type="hidden" name="wName" value="${loginUser.name}">
 			<h4 class="ui dividing header" style="padding-bottom: 1em;">
-			<span style="font-size: 18px;">${board.BTitle}</span>
-			<span class="fr" style="font-size: 14px;">${fn:replace(board.BDate,"T"," ")}</span>
-			</h4>		
+				<span style="font-size: 18px;">${board.BTitle}</span>
+				<span class="fr" style="font-size: 14px;">${fn:replace(board.BDate,"T"," ")}</span>
+				<br style="clear:both;">
+				<span class="nameLine">${board.WName}</span>
+				<span class="nameLine fr">조회수&nbsp;&nbsp;&nbsp;&nbsp;${board.BViewCnt}</span>
+			</h4>
 			${board.BContent}
 			<hr style="border-top: 1px solid rgba(34, 36, 38, 0.15);">
 		</form>
 			<!----------------------------------------------------------->
 			
-			<div class="ui comments" id="replyDiv">
-			  <h4 class="ui dividing header" style="padding-bottom: 1em;">Comments <span id="replyCount"></span></h4>
-			  <c:if test="${replyList eq '[]'}">
-				<!-- 댓글 -->
-				  <div class="comment">
-				    <div class="content"><b>이름</b>
-				      <div class="metadata">
-				        <span class="date">작성일</span>
-				      </div>
-				      <div class="text">
-				        <p class="fl" style="margin: 0 0 5px;">내용</p>
-				        <!-- 본인이 작성한 댓글일 경우 수정 삭제 버튼 -->
-				        <div class="actions fr">
-				        	<a onclick="" id="fix" class="reply">수정</a>
-				        	<a class="reply replyRemove">삭제
-				        		<input id="hdel" type="hidden" name="tbrId" value="21">
-				        	</a>
-				        </div>
-				        
-				      </div>
-				      <div class="actions" style="clear: both">
-				        <a class="reply openReplyField">Reply</a>
-				        <form class="ui reply form" style="display: none;">
-					      <div class="field" style="margin-bottom: 0.5em;">
-					        <textarea name="rContent" style="min-height: 4em; height: 4em;"></textarea>
-					      </div>
-					      <div class="ui primary button">Add Reply</div>
-					    </form>
-				      </div>
-				    </div>
-					<!-- 대댓글 -->				    
-				    <div class="comments">
-				      <div class="comment">
-				        <div class="content"><b>Jenny Hess</b>
-				          <div class="metadata">
-				            <span class="date">작성일</span>
-				          </div>
-				          <div class="text">
-				            Elliot you are always so right :)
-				          </div>
-				          <div class="actions">
-				            <a class="reply openReplyField">Reply</a>
-				            <form class="ui reply form" style="display: none;">
-						      <div class="field" style="margin-bottom: 0.5em;">
-						        <textarea name="rContent" style="min-height: 4em; height: 4em;"></textarea>
-						      </div>
-						      <div class="ui primary button">Add Reply</div>
-						    </form>
-				          </div>
-				        </div>
-				      </div>
-				    </div>
-				    
-				    <div class="comment">
-				        <div class="content"><b>Jenny Hess</b>
-				          <div class="metadata">
-				            <span class="date">작성일</span>
-				          </div>
-				          <div class="text">
-				            Elliot you are always so right :)
-				          </div>
-				          <div class="actions">
-				            <a class="reply openReplyField">Reply</a>
-				            <form class="ui reply form" style="display: none;">
-						      <div class="field" style="margin-bottom: 0.5em;">
-						        <textarea name="rContent" style="min-height: 4em; height: 4em;"></textarea>
-						      </div>
-						      <div class="ui primary button">Add Reply</div>
-						    </form>
-				          </div>
-				        </div>
-				      </div>
-				      		    
-				  </div>
-			  
-			  </c:if>
-			</div>
+			<div class="ui comments" id="replyDiv"></div>
 			<!-- 댓글 입력 textarea -->
 			<form class="ui reply form" id="addReplyForm">
 				<input type="hidden" name="wId" value="${loginUser.id}">
@@ -137,6 +84,10 @@
 </body>
 
 <script>
+	/* 페이지 들어와서 댓글 깔아주기 */
+	$(function(){
+		getReplyList();
+	});
 	/* 수정버튼 */
 	$(document).on('click','#board-modify-btn',function(){
 		$('#board-view-form').submit();
@@ -155,10 +106,13 @@
 			th.slideUp();
 		}
 	});
-	/* 페이지 들어와서 댓글 깔아주기 */
-	$(function(){
-		getReplyList();
-		
+	/* 좋아요 버튼 누르면 */
+	$(document).on('click','#like',function(){
+		if($(this).hasClass('likeRed')){
+			$(this).removeClass('likeRed');
+		} else {
+			$(this).addClass('likeRed');
+		}
 	});
 	/* 댓글 작성하기 */
 	$(document).on('click','.add-reply-btn',function(){
@@ -220,10 +174,28 @@
 			 	var $replyDiv = $('#replyDiv');
 				$replyDiv.html("");
 			 	var $h4CommentTitle = $('<h4 class="ui dividing header" style="padding-bottom: 1em;">');
-			 	$replyDiv.append($h4CommentTitle);					
-					
+			 	
+			 	var $aLike = $('<span class="likeSpan likeGray" id="like">');
+				var $iconLike = $('<i class="heart icon">');
+				var $spanLike = $('<span class="likeBlack">').text('${board.BLike}');
+			 	$aLike.append($iconLike);
+			 	$aLike.append($spanLike);
+			 	
+			 	/*
+			 	var $divLike1 = $('<span class="ui labeled button" tabindex="0">');
+				var $divLike2 = $('<span class="ui red button">');
+				var $iconLike = $('<i class="heart icon">');
+				$divLike2.append($iconLike);
+				 var $aLike = $('<a class="ui basic red left pointing label">').text('${board.BLike}'); 
+				$divLike1.append($divLike2);
+				$divLike1.append($aLike); 
+				*/
+				
+				$h4CommentTitle.append($aLike);
+				$replyDiv.append($h4CommentTitle);	
+			 	
 				if(replyList.length > 0){
-					var $spanReplyCount = $('<span>').text('Comments ('+replyList.length+')');
+					var $spanReplyCount = $('<span class="fl mr20">').text('Comments ('+replyList.length+')');
 				 	$h4CommentTitle.append($spanReplyCount);
 					
 					$.each(replyList, function(index, reply){
@@ -247,7 +219,7 @@
 						}
 					});
 				}else{
-					var $spanReplyCount = $('<span>').text('Comments (0)');
+					var $spanReplyCount = $('<span class="fl mr20">').text('Comments (0)');
 				 	$h4CommentTitle.append($spanReplyCount);
 				}
 			},   /* success:function 끝 */
