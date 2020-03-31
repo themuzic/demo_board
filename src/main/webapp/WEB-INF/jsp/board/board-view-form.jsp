@@ -71,7 +71,6 @@
 			  </div>
 			  <div class="ui primary button add-reply-btn" id="">Add Reply</div>
 			</form>
-
 			
 			<!----------------------------------------------------------->
 			
@@ -108,12 +107,41 @@
 	});
 	/* 좋아요 버튼 누르면 */
 	$(document).on('click','#like',function(){
-		if($(this).hasClass('likeRed')){
-			$(this).removeClass('likeRed');
-		} else {
-			$(this).addClass('likeRed');
+		var count = parseInt($('#likeCount').text());
+		var plus;
+		if($(this).hasClass('likeRed')){	// 좋아요 -1
+			plus = false;
+			count -= 1;
+		} else {							// 좋아요 +1
+			plus = true;
+			count += 1;
 		}
+		likeCount(count, plus);
 	});
+	/* 좋아요 ajax */
+	function likeCount(count, plus){		
+		$.ajax({
+			url:"/likeCount",
+			type:"POST",
+			data:{bNo:${board.BNo},
+				  id:'${loginUser.id}',
+				  count:count,
+				  plus:plus},
+			success:function(updatedCount){
+				$('#likeCount').text("");
+				$('#likeCount').text(updatedCount);
+				if(plus == true) {
+					$('#like').addClass('likeRed');
+				} else {
+					$('#like').removeClass('likeRed');
+				}
+			},
+			error:function(){
+				alertify.alert('', 'Server connection failed');
+			}
+		});
+	}	
+	
 	/* 댓글 작성하기 */
 	$(document).on('click','.add-reply-btn',function(){
 		var replyContent = $(this).prev().children('textarea');
@@ -145,7 +173,7 @@
     				}
 				},
 				error:function(){
-					alertify.alert('', 'AJAX통신 실패');
+					alertify.alert('', 'Server connection failed');
 				}
 			})
 		}
@@ -170,26 +198,21 @@
 			data:{bNo:bNo},
 			dataType:"json",
 			success:function(replyList){
-				/* var replyList = JSON.parse(data) */
 			 	var $replyDiv = $('#replyDiv');
 				$replyDiv.html("");
 			 	var $h4CommentTitle = $('<h4 class="ui dividing header" style="padding-bottom: 1em;">');
 			 	
-			 	var $aLike = $('<span class="likeSpan likeGray" id="like">');
+			 	var $aLike;
+			 	if('${isLike}' == 'true'){
+					$aLike = $('<span class="likeSpan likeGray likeRed" id="like">');
+				} else {
+					$aLike = $('<span class="likeSpan likeGray" id="like">');
+				}
+			 	
 				var $iconLike = $('<i class="heart icon">');
-				var $spanLike = $('<span class="likeBlack">').text('${board.BLike}');
+				var $spanLike = $('<span class="likeBlack" id="likeCount">').text('${board.BLike}');
 			 	$aLike.append($iconLike);
 			 	$aLike.append($spanLike);
-			 	
-			 	/*
-			 	var $divLike1 = $('<span class="ui labeled button" tabindex="0">');
-				var $divLike2 = $('<span class="ui red button">');
-				var $iconLike = $('<i class="heart icon">');
-				$divLike2.append($iconLike);
-				 var $aLike = $('<a class="ui basic red left pointing label">').text('${board.BLike}'); 
-				$divLike1.append($divLike2);
-				$divLike1.append($aLike); 
-				*/
 				
 				$h4CommentTitle.append($aLike);
 				$replyDiv.append($h4CommentTitle);	
@@ -224,7 +247,7 @@
 				}
 			},   /* success:function 끝 */
 			error:function(){
-				console.log("ajax 통신 실패");
+				console.log("Server connection failed");
 			}
 		});
 	}

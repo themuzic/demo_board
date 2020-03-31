@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,10 @@ import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
 import com.demo_board.model.domain.ImgFile;
 import com.demo_board.model.domain.ImgFileRepository;
+import com.demo_board.model.domain.Like;
+import com.demo_board.model.domain.LikePK;
+import com.demo_board.model.domain.LikeRepository;
+import com.demo_board.model.domain.Member;
 import com.demo_board.model.domain.Reply;
 import com.demo_board.model.domain.ReplyRepository;
 import com.demo_board.model.service.BoardService;
@@ -38,6 +43,8 @@ public class BoardController {
 	private ImgFileRepository imgFileRepository;
 	@Autowired
 	private ReplyRepository replyRepository;
+	@Autowired
+	private LikeRepository likeRepository;
 	@Autowired
 	private BoardService boardService;
 	
@@ -57,7 +64,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/insert")
-	public void insert(HttpServletRequest request, Board board, ModelAndView mv, HttpServletResponse response) {
+	public void insert(Board board, ModelAndView mv, HttpServletResponse response) {
 		try {
 			boardRepository.save(board);
 			response.sendRedirect("/");
@@ -84,9 +91,20 @@ public class BoardController {
 	}
 	
 	@PostMapping("/view")
-	public ModelAndView veiwDetail(ModelAndView mv, Board board) {
+	public ModelAndView veiwDetail(HttpSession session, ModelAndView mv, Board board) {
+		Member user = (Member)session.getAttribute("loginUser");
 		Optional<Board> b = boardRepository.findById(board.getBNo());
-		mv.addObject("board", b.get());
+		b.ifPresent(countPlusB ->{
+			countPlusB.setBViewCnt(b.get().getBViewCnt()+1);
+			Board updatedBoard = boardRepository.save(countPlusB);
+			mv.addObject("board", updatedBoard);
+			Optional<Like> like = likeRepository.findById(new LikePK(board.getBNo(), user.getId()));
+			if(like.isPresent()) {
+				mv.addObject("isLike", true);
+			} else {
+				mv.addObject("isLike", false);
+			}
+		});
 		mv.setViewName("/board/board-view-form");
 		return mv;
 	}
@@ -96,6 +114,22 @@ public class BoardController {
 		mv = boardService.boardPaging(pageNum, mv);
 		mv.setViewName("index");
 		return mv;
+	}
+	
+	@ResponseBody
+	@PostMapping("/likeCount")
+	public Long likeCount(Long bNo, Long count, LikePK likePk, boolean plus) {
+		Optional<Board> b = boardRepository.findById(bNo);
+		b.ifPresent(countPlusB ->{
+			countPlusB.setBLike(count);
+			boardRepository.save(countPlusB);
+		});
+		if(plus == true) {	// 좋아요+1 일때
+			likeRepository.save(new Like(likePk));
+		} else {			// 좋아요-1 일때
+			likeRepository.deleteById(likePk);
+		}
+		return count;
 	}
 	
 	@PostMapping("/upload")

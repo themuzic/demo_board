@@ -76,11 +76,9 @@ public class MemberController {
 	@PostMapping("/login")
 	public void login(HttpSession session, Member member, HttpServletResponse response) {
 		try {
-			System.out.println("로그인 하러옴");
 			Member loginUser = memberRepository.findByEmailAndPwd(member.getEmail(), member.getPwd());
 			if(loginUser != null) {
 				session.setAttribute("loginUser", loginUser);
-//				System.out.println(loginUser);
 				System.out.println("로그인성공");
 			} else {
 				System.out.println("로그인실패");
