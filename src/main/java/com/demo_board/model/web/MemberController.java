@@ -7,19 +7,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
 import com.demo_board.model.domain.Member;
 import com.demo_board.model.domain.MemberRepository;
@@ -31,8 +27,6 @@ public class MemberController {
 	
 	@Autowired
 	private MemberRepository memberRepository; 
-	@Autowired
-	private BoardRepository boardRepository;
 	@Autowired
 	private BoardService boardService;
 	
@@ -97,6 +91,17 @@ public class MemberController {
 			response.sendRedirect("/");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	@ResponseBody
+	@PostMapping("/emailCheck")
+	public String emailCheck(String email) {
+		Member m = memberRepository.findByEmail(email);
+		if(m == null) {
+			return "true";
+		} else {
+			return "false";
 		}
 	}
 	
