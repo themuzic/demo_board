@@ -34,6 +34,7 @@
 </body>
 
 <script>
+	/* 썸머노트 활성화 */
 	$(document).ready(function() { 
 		$("#summernote").summernote({
 			tabsize: 2,
@@ -42,17 +43,30 @@
 		});
 		$('.dropdown-toggle').dropdown();
 	});
-	
+	/* 글 작성 버튼 누르면 */
 	$(document).on('click','#write-submit-btn',function(){
 		if(checkWriteForm()) {
+			/* 
+			var text = $('#summernote').val();
+			text = replaceContext(text);
+			$('#summernote').val(text);
+			 */
 			$('#write-form').submit();
 		}
 	});
-	
+	/* 취소 버튼 누르면 */
 	$(document).on('click','#write-cancel-btn',function(){
 		location.href="/";
 	});
-	
+	/* 썸머노트에 작성한 내용 DB에 저장하기전에 HTML태그들 제거하는 함수 */
+	/* 
+	function replaceContext(text){
+		text = text.replace(/<br\/>/ig, "\n");
+		text = text.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/ig, "");
+		return text;
+	}
+	 */
+	/* 글 작성 하기전에 검사 */
 	function checkWriteForm() {
 		var obj = document.getElementById('write-form');
 		
@@ -68,6 +82,5 @@
 		}
 		return true;
 	}
-	
 </script>
 </html>

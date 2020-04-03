@@ -111,7 +111,14 @@ public class BoardController {
 	
 	@GetMapping("/paging")
 	public ModelAndView boardsPaging(int pageNum, ModelAndView mv) {
-		mv = boardService.boardPaging(pageNum, mv);
+		mv = boardService.boardPaging(pageNum-1, mv);
+		mv.setViewName("index");
+		return mv;
+	}
+	
+	@GetMapping("/search")
+	public ModelAndView searchBoards(String condition1, String condition2, ModelAndView mv) {
+		mv = boardService.searchBoards(condition1, condition2, mv);
 		mv.setViewName("index");
 		return mv;
 	}

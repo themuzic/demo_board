@@ -1,5 +1,8 @@
 package com.demo_board.model.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,5 +39,22 @@ public class BoardService {
 		mv.addObject("isLast", boardList.isLast());
 		return mv;
 	}
-
+	
+	public ModelAndView searchBoards(String condition1, String condition2, ModelAndView mv) {
+		List<Board> boardList = new ArrayList<>();
+		if(condition1.equals("title")) {
+			String bTitle = condition2;
+			boardList = boardRepository.findBybTitleContaining(bTitle);
+		} else if(condition1.equals("writer")) {
+			String wName = condition2;
+			boardList = boardRepository.findBywNameContaining(wName);
+		} else if(condition1.equals("content")) {
+			String bContent = condition2;
+			boardList = boardRepository.findBybContentContaining(bContent);
+		}
+		System.out.println(boardList);
+		
+		
+		return mv;
+	}
 }

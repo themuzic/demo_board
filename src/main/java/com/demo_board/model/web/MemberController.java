@@ -1,6 +1,7 @@
 package com.demo_board.model.web;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
 import com.demo_board.model.domain.Member;
 import com.demo_board.model.domain.MemberRepository;
 import com.demo_board.model.service.BoardService;
+import com.google.gson.Gson;
 
 @SessionAttributes("loginUser")
 @Controller
@@ -28,11 +31,16 @@ public class MemberController {
 	@Autowired
 	private MemberRepository memberRepository; 
 	@Autowired
+	private BoardRepository boardRepository; 
+	@Autowired
 	private BoardService boardService;
 	
 	@GetMapping("/")
 	public ModelAndView index(ModelAndView mv) {
+		List<Board> bList = boardRepository.findAll();
 		mv = boardService.boardPaging(0, mv);
+		Gson gson = new Gson();
+		mv.addObject("bList", gson.toJson(bList));
 		mv.setViewName("index");
 		return mv;
 	}
