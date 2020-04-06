@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -110,15 +111,12 @@ public class BoardController {
 	}
 	
 	@GetMapping("/paging")
-	public ModelAndView boardsPaging(int pageNum, ModelAndView mv) {
-		mv = boardService.boardPaging(pageNum-1, mv);
-		mv.setViewName("index");
-		return mv;
-	}
-	
-	@GetMapping("/search")
-	public ModelAndView searchBoards(String condition1, String condition2, ModelAndView mv) {
-		mv = boardService.searchBoards(condition1, condition2, mv);
+	public ModelAndView boardsPaging(int pageNum, ModelAndView mv, String condition1, String condition2) {
+		if(condition1 != "") {
+			mv = boardService.searchBoards(pageNum-1, condition1, condition2, mv);
+		} else {
+			mv = boardService.boardPaging(pageNum-1, mv);
+		}
 		mv.setViewName("index");
 		return mv;
 	}

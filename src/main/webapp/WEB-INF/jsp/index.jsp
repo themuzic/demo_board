@@ -133,18 +133,24 @@ thead tr {height: 45px;}
 					<c:if test="${isFirst eq false}">
 						<c:url value="/paging" var="paging">
 							<c:param name="pageNum" value="${getNumber}"/>
+							<c:param name="condition1" value="${condition1}"/>
+							<c:param name="condition2" value="${condition2}"/>
 						</c:url>
 						<a href="${paging}">〈 이전</a>
 					</c:if>
 					<c:forEach var="index" begin="${startPage}" end="${lastPage}">
 						<c:url value="/paging" var="paging">
 							<c:param name="pageNum" value="${index}"/>
+							<c:param name="condition1" value="${condition1}"/>
+							<c:param name="condition2" value="${condition2}"/>
 						</c:url>
 						<a href="${paging}" class="pages">${index}</a>
 					</c:forEach>
 					<c:if test="${isLast eq false}">
 						<c:url value="/paging" var="paging">
 							<c:param name="pageNum" value="${getNumber+2}"/>
+							<c:param name="condition1" value="${condition1}"/>
+							<c:param name="condition2" value="${condition2}"/>
 						</c:url>
 						<a href="${paging}" class="">다음 〉</a>
 					</c:if>
@@ -185,32 +191,11 @@ thead tr {height: 45px;}
 		$(".wrap").removeClass("show");
 	});
 	/* 검색 버튼 누르면 */
-	/* 
 	$(document).on('click','#searchIcon',function(){
 		var condition1 = $('select[name=condition1]').val();
 		var condition2 = $('input[name=condition2]').val();
-		var tbody = $('#board-body');
-		tbody.html("");
-		$.each(${bList}, function(index, b){
-			if(condition1 == "title"){
-				if(b.bTitle.match(condition2)){
-					var tr = makeBoardTr(b);
-					tbody.append(tr);
-				}
-			} else if(condition1 == "writer"){
-				if(b.wName.match(condition2)){
-					var tr = makeBoardTr(b);
-					tbody.append(tr);
-				}
-			} else if(condition1 == "content"){
-				if(b.bContent.match(condition2)){
-					var tr = makeBoardTr(b);
-					tbody.append(tr);
-				}
-			}
-		});
+		location.href='/paging?pageNum=1&condition1='+condition1+'&condition2='+condition2;		
 	});
-	 */
 	/* 현재 페이지 표시 */
 	$(function(){
 		$('#bottom a').each(function(){
@@ -218,6 +203,13 @@ thead tr {height: 45px;}
 				$(this).addClass('currentPage');
 			}
 		});
+		
+		if('${condition1}' != '') {
+			$('select[name=condition1]').val('${condition1}').prop('selected', true);
+		}
+		if('${condition2}' != '') {
+			$('input[name=condition2]').val('${condition2}');
+		}
 	});
 	/* 게시글 상세 페이지로 이동하는 함수 */
 	function viewDetail(b_no) {
@@ -226,31 +218,6 @@ thead tr {height: 45px;}
 		f.action = "/view";
 		f.method = "post";
 		f.submit();
-	}
-	/* 게시글 검색 함수 */
-	function makeBoardTr(board){
-		var $tr = $('<tr>');
-		var $td1 = $('<td>').text(board.bNo);
-		var $td2 = $('<td align="left">');
-		if('${loginUser.id}' != ''){
-			var $a = $('<a href="javascript:viewDetail('+board.bNo+');">').text(board.bTitle);
-			$td2.append($a);
-		} else{
-			$td2.text(board.bTitle);
-		}
-		var $td3 = $('<td>').text(board.wName);
-		var $td4 = $('<td>').text(String(board.bDate).replace('T',' '));
-		var $td5 = $('<td>').text(board.bLike);
-		var $td6 = $('<td>').text(board.bViewCnt);
-		
-		$tr.append($td1);
-		$tr.append($td2);
-		$tr.append($td3);
-		$tr.append($td4);
-		$tr.append($td5);
-		$tr.append($td6);
-		
-		return $tr;
 	}
 </script>
 
