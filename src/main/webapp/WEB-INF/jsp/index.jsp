@@ -85,12 +85,23 @@ thead tr {height: 45px;}
 					<c:forEach var="board" items="${boardList}">
 						<tr>
 							<td>${board.BNo}</td>
-							<td align="left">
+							<td style="text-align: left; padding-left: 40px; padding-right: 40px;">
 								<c:if test="${empty loginUser}">
-									${board.BTitle}
+									<c:if test="${board.BReply eq '0'}">
+										${board.BTitle}
+									</c:if>
+									<c:if test="${board.BReply ne '0'}">
+										${board.BTitle} <b style="color:red;">[${board.BReply}]</b>
+									</c:if>
 								</c:if>
 								<c:if test="${!empty loginUser}">
-									<a href="javascript:viewDetail(${board.BNo});">${board.BTitle}</a>
+									<c:if test="${board.BReply eq '0'}">
+										<a href="javascript:viewDetail(${board.BNo});">${board.BTitle}</a>
+									</c:if>
+									<c:if test="${board.BReply ne '0'}">
+										<a href="javascript:viewDetail(${board.BNo});">${board.BTitle}</a> <b style="color:red;">[${board.BReply}]</b>
+									</c:if>
+									
 								</c:if>
 							</td>
 							<td>${board.WName}</td>
@@ -184,6 +195,7 @@ thead tr {height: 45px;}
 	/* 로그인 버튼 누르면 */
 	$(document).on('click','#signIn',function(){
 		$("#login-wrap").slideToggle();
+		$('input[name=email]').focus();
 		$(".sign").val("");
 	});
 	/* 회원가입 모달 x 누르면 */

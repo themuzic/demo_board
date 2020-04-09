@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Demo_Board</title>
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -17,17 +19,18 @@
 	<jsp:include page="../header/header.jsp"/>
 	<div id="write-outer">
 		<form id="update-form" action="/update" method="POST">
-			<input type="hidden" name="bNo" value="">
-			<input type="hidden" name="wId" value="${loginUser.id}">
-			<input type="hidden" name="wName" value="${loginUser.name}">
+			<input type="hidden" name="bNo" value="${board.BNo}">
+			<input type="hidden" name="wId" value="${board.WId}">
+			<input type="hidden" name="wName" value="${board.WName}">
+			<%-- <input type="hidden" name="bDate" value="${fn:replace(board.BDate,'T',' ')}"> --%>
 			<label>제목</label><br>
 			<div class="ui input">
-				<input type="text" name="bTitle" style="height: 30px; width: 689px;" value="">
+				<input type="text" name="bTitle" style="height: 30px; width: 689px;" value="${board.BTitle}">
 			</div><br><br>		
 			<label>내용</label><br>
 			<textarea id="summernote" class="summernote" name="bContent" value=""></textarea>
 			<div align="center">
-				<div class="ui button" id="update-submit-btn" tabindex="0">Modify</div>
+				<div class="ui primary button" id="update-submit-btn" tabindex="0">Modify</div>
 				<div class="ui button" id="update-cancel-btn" tabindex="0">Cancel</div>
 			</div>
 		</form>
@@ -42,6 +45,8 @@
 	        lang: 'ko-KR'
 		});
 		$('.dropdown-toggle').dropdown();
+		
+		$("#summernote").summernote('code','${board.BContent}');
 	});
 	
 	$(document).on('click','#update-submit-btn',function(){

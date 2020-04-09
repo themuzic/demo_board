@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Demo_Board</title>
 
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -55,12 +55,16 @@
 	text-align: center;
 }
 a {text-decoration: none;}
+#sessionAlert:hover{cursor: pointer;}
+#demoBoard:hover{cursor: pointer;}
 </style>
 </head>
 <body>
 	<c:set var="contextPath" value="${springMacroRequestContext.contextPath}" scope="application"/>
+	<div class="ui blue floating message" id="sessionAlert" style="position: absolute; width: 100%; opacity: 0.7; color: black;
+																text-align: center; margin: 0; display: none;"></div>
 	<div id="header">
-		<h1 align="center">Demo_Board</h1>
+		<h1 align="center" id="demoBoard">Demo_Board</h1>
 		<div id="sign-div">
 			<c:if test="${empty sessionScope.loginUser}">
 				<span id="signUp" class="hb" style="margin-right: 5px;">Sign Up</span> | <span id="signIn" class="hb" style="margin-left: 5px;">Sign In</span>
@@ -88,6 +92,16 @@ a {text-decoration: none;}
 				</span>
 			</c:if>
 			<c:if test="${!empty sessionScope.loginUser}">
+				<span style="margin-right: 15px; ">
+					<span style="background: red; color:white; 
+								width: 21px; height: 21px;
+							    border: 1px solid; line-height: 19px;
+							    box-sizing: border-box; display: inline-block;
+							    text-align: center; border-radius: 30px;
+							    position: relative; top: -10px;
+							    left: 33px; z-index: -1;" id="alertNumber">0</span>
+					<i class="bell outline icon mgr15" id="alertIcon" style="color:black;"></i>
+				</span>
 				<span id="modify" class="hb" style="margin-right: 5px;">Modify</span> | 
 				<span id="signOut" class="hb" style="margin-left: 5px;" onclick="location.href='/logout'">Sign Out</span>
 			</c:if>
@@ -97,13 +111,27 @@ a {text-decoration: none;}
 </body>
 
 <script>
-	
+	var socket = null;
+	$(function(){
+		if('${loginUser}' != ''){
+			connectWS();
+		}
+	});
+	/* 상당 demoBoard 누르면 */
+	$('#demoBoard').click(function(){
+		location.href="/";
+	});
+	/* 로그인 버튼 누르면 */
 	$(document).on('click','#login-submit-btn',function(){
 		if(checkLoginForm()){
 			$('#login-form').submit();
 		}
 	});
-	
+	/* 댓글 알림 누르면 */
+	$(document).on('click','#sessionAlert',function(){
+		viewDetail($('#goNumber').val());
+	});
+	/* 로그인 form check function */	
 	function checkLoginForm() {
 		var obj = document.getElementById('login-form');
 		
@@ -119,7 +147,34 @@ a {text-decoration: none;}
 		}
 		return true;
 	}
-
+	/* WebSocket */	
+	function connectWS() {
+		console.log('socket접속시도');
+		var ws = new WebSocket("ws://localhost:8282/replyEcho");
+		socket = ws;
+		
+		ws.onopen = function(event){
+			console.log('connection opened');
+		};
+		
+		ws.onmessage = function(event){
+			console.log("Received Message : "+event.data);
+			var sessionAlert = $('#sessionAlert');
+			sessionAlert.html(event.data);
+			sessionAlert.slideDown();
+			setTimeout(function(){
+				sessionAlert.slideUp();
+			}, 3000);
+		};
+		
+		ws.onclose = function(event){
+			console.log('connection closed');
+		};
+		
+		ws.onerror = function(err){
+			console.log('error : '+err);
+		}
+	}
 </script>
 
 </html>

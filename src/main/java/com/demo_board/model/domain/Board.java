@@ -55,6 +55,8 @@ public class Board {
 	private Long bLike;
 	@Column(nullable = false, name="b_view_cnt")
 	private Long bViewCnt;
+	@Column(nullable = false, name="b_reply")
+	private Long bReply;
 	@Column(nullable = false, name="b_status")
 	private String bStatus;
 	
@@ -73,6 +75,7 @@ public class Board {
 		this.bDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
 		this.bFile = this.bFile == null ? "N" : "Y";
 		this.bLike = this.bLike == null ? 0 : this.bLike;
+		this.bReply = this.bReply == null ? 0 : this.bReply;
 		this.bViewCnt = 0l;
 		this.bStatus = "Y";
 	}

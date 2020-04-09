@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.demo_board.model.domain.Board;
 import com.demo_board.model.domain.BoardRepository;
@@ -54,14 +56,25 @@ public class BoardController {
 		return "/board/write-form";
 	}
 	
-	@GetMapping("/modify")
-	public String updateForm(){
-		return "/board/update-form";
+	@PostMapping("/modify")
+	public ModelAndView updateForm(Board board, ModelAndView mv){
+		Optional<Board> b = boardRepository.findById(board.getBNo());
+		mv.addObject("board", b.get());
+		mv.setViewName("/board/update-form");
+		return mv;
 	}
 	
 	@PostMapping("/update")
-	public String update(HttpServletRequest request, Board board) {
-		return "/index";
+	public ModelAndView update(Board board, ModelAndView mv) {
+		Optional<Board> b = boardRepository.findById(board.getBNo());
+		b.ifPresent(updateB ->{
+			updateB.setBTitle(board.getBTitle());
+			updateB.setBContent(board.getBContent());
+			Board updatedBoard = boardRepository.save(updateB);
+			mv.addObject("board", updatedBoard);
+		});
+		mv.setViewName("/board/update-process");
+		return mv;
 	}
 	
 	@PostMapping("/insert")
@@ -85,9 +98,15 @@ public class BoardController {
 	@ResponseBody
 	@PostMapping("/addReply")
 	public String addReply(Reply reply) {
-		System.out.println(reply);
 		Reply r = replyRepository.save(reply);
-		if(r != null) return "success";
+		if(r != null) {
+			Optional<Board> b = boardRepository.findById(reply.getBNo());
+			b.ifPresent(countPlusB ->{
+				countPlusB.setBReply(b.get().getBReply()+1);
+				boardRepository.save(countPlusB);
+			});
+			return "success";
+		}
 		else return "fail";
 	}
 	

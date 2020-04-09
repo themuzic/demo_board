@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Demo_Board</title>
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -46,8 +46,8 @@
 	<div id="write-outer">
 		<form class="ui form" id="board-view-form" action="/modify" method="POST">
 			<input type="hidden" name="bNo" value="${board.BNo}">
-			<input type="hidden" name="wId" value="${loginUser.id}">
-			<input type="hidden" name="wName" value="${loginUser.name}">
+			<input type="hidden" name="wId" value="${board.WId}">
+			<input type="hidden" name="wName" value="${board.WName}">
 			<h4 class="ui dividing header" style="padding-bottom: 1em;">
 				<span style="font-size: 18px;">${board.BTitle}</span>
 				<span class="fr" style="font-size: 14px;">${fn:replace(board.BDate,"T"," ")}</span>
@@ -73,12 +73,12 @@
 			</form>
 			
 			<!----------------------------------------------------------->
-			
-			<div align="center">
-				<div class="ui primary button" id="board-modify-btn" tabindex="0">Modify</div>
-				<div class="ui button" id="board-remove-btn" tabindex="0">Remove</div>
-			</div>
-		
+			<c:if test="${board.WId eq loginUser.id}">
+				<div align="center">
+					<div class="ui primary button" id="board-modify-btn" tabindex="0">Modify</div>
+					<div class="ui button" id="board-remove-btn" tabindex="0">Remove</div>
+				</div>
+			</c:if>
 	</div>
 </body>
 
@@ -156,7 +156,9 @@
 			formData.append('wName', obj.wName.value);
 			formData.append('rLevel', obj.rLevel.value);
 			formData.append('rContent', obj.rContent.value);
-			formData.append('rrNo', obj.rrNo.value);
+			if(obj.rrNo != undefined){
+				formData.append('rrNo', obj.rrNo.value);
+			}
 			
 			$.ajax({
 				url:"/addReply",
@@ -168,6 +170,16 @@
 					if(data == "success"){
 						$('#replyArea').val("");
 						getReplyList();
+						
+						console.log('socket: ', socket);
+						// websocket에 메세지 보내기
+						socket.send(JSON.stringify({
+							cmd:'reply',
+							replyWriter:'${loginUser.name}',
+							boardWriter:'${board.WId}',
+							bno:${board.BNo}
+						}));
+						
     				} else{
     					alertify.alert('', 'Failure to comment');
     				}
