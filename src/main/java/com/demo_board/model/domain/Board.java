@@ -37,46 +37,38 @@ public class Board {
 			generator = "BOARD_SEQ_GEN"				// 식별자 생성기를 만들어 놓은 시퀀스 제네레이터로 설정
 			)
 	@Column(name="b_no")
-	private Long bNo;
+	private Long boardNo;
 	@Column(nullable = false, name="b_title")
-	private String bTitle;
+	private String boardTitle;
 	@Column(nullable = false, name="w_id")
-	private Long wId;
+	private Long writerId;
 	@Column(nullable = false, name="w_name")
-	private String wName;
+	private String writerName;
 	@Column(nullable = false, name="b_content")
 	@Lob
-	private String bContent;
+	private String boardContent;
 	@Column(nullable = false, name="b_date")
-	private LocalDateTime bDate;
+	private LocalDateTime boardDate;
 	@Column(nullable = false, name="b_file")
-	private String bFile;
+	private String boardFile;
 	@Column(nullable = false, name="b_like")
-	private Long bLike;
+	private Long boardLike;
 	@Column(nullable = false, name="b_view_cnt")
-	private Long bViewCnt;
+	private Long boardViewCnt;
 	@Column(nullable = false, name="b_reply")
-	private Long bReply;
+	private Long boardReply;
 	@Column(nullable = false, name="b_status")
-	private String bStatus;
-	
-	public Board(String bTitle, Long wId, String wName, String bContent) {
-		super();
-		this.bTitle = bTitle;
-		this.wId = wId;
-		this.wName = wName;
-		this.bContent = bContent;
-	}
+	private String boardStatus;
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.bDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
-		this.bFile = this.bFile == null ? "N" : "Y";
-		this.bLike = this.bLike == null ? 0 : this.bLike;
-		this.bReply = this.bReply == null ? 0 : this.bReply;
-		this.bViewCnt = 0l;
-		this.bStatus = "Y";
+		this.boardDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
+		this.boardFile = this.boardFile == null ? "N" : "Y";
+		this.boardLike = this.boardLike == null ? 0 : this.boardLike;
+		this.boardReply = this.boardReply == null ? 0 : this.boardReply;
+		this.boardViewCnt = 0l;
+		this.boardStatus = "Y";
 	}
 }

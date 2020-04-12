@@ -42,7 +42,7 @@ public class ReplyEchoHandler extends TextWebSocketHandler{
 			String boardWriter = jsonObj.get("boardWriter").getAsString();
 			WebSocketSession boardWriterSession = userSessions.get(boardWriter);
 			if(jsonObj.get("cmd").getAsString().equals("reply") && boardWriterSession != null) {
-				TextMessage tempMsg = new TextMessage("<input type='hidden' id='goNumber' value='"+jsonObj.get("bno").getAsInt()+"'>"+
+				TextMessage tempMsg = new TextMessage("<input type='hidden' id='goNumber' value='"+jsonObj.get("boardNo").getAsInt()+"'>"+
 						jsonObj.get("replyWriter").getAsString()+"님이 댓글을 작성했습니다.");
 				boardWriterSession.sendMessage(tempMsg);
 			}

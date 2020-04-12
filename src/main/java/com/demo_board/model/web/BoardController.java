@@ -2,6 +2,7 @@ package com.demo_board.model.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -58,18 +59,18 @@ public class BoardController {
 	
 	@PostMapping("/modify")
 	public ModelAndView updateForm(Board board, ModelAndView mv){
-		Optional<Board> b = boardRepository.findById(board.getBNo());
+		Optional<Board> b = boardRepository.findById(board.getBoardNo());
 		mv.addObject("board", b.get());
 		mv.setViewName("/board/update-form");
 		return mv;
 	}
 	
 	@PostMapping("/update")
-	public ModelAndView update(Board board, ModelAndView mv) {
-		Optional<Board> b = boardRepository.findById(board.getBNo());
+	public ModelAndView updateBoard(Board board, ModelAndView mv) {
+		Optional<Board> b = boardRepository.findById(board.getBoardNo());
 		b.ifPresent(updateB ->{
-			updateB.setBTitle(board.getBTitle());
-			updateB.setBContent(board.getBContent());
+			updateB.setBoardTitle(board.getBoardTitle());
+			updateB.setBoardContent(board.getBoardContent());
 			Board updatedBoard = boardRepository.save(updateB);
 			mv.addObject("board", updatedBoard);
 		});
@@ -77,8 +78,35 @@ public class BoardController {
 		return mv;
 	}
 	
+	@PostMapping("/remove")
+	public void removeBoard(Board board, HttpServletResponse response) {
+		Optional<Board> b = boardRepository.findById(board.getBoardNo());
+		b.ifPresent(updateB ->{
+			updateB.setBoardStatus("N");
+			Board removedBoard = boardRepository.save(updateB);
+			if(removedBoard != null) {
+				try {
+					response.sendRedirect("/");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else {
+				PrintWriter out;
+				try {
+					out = response.getWriter();
+					out.print("<script>");
+					out.print("alertify.alert('Remove failed');");
+					out.print("javascript:history.go(-1);");
+					out.print("</script>");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	@PostMapping("/insert")
-	public void insert(Board board, ModelAndView mv, HttpServletResponse response) {
+	public void insertBoard(Board board, ModelAndView mv, HttpServletResponse response) {
 		try {
 			boardRepository.save(board);
 			response.sendRedirect("/");
@@ -89,7 +117,7 @@ public class BoardController {
 	
 	@PostMapping("/getReplyList")
 	public void getReplyList(Board board, HttpServletResponse response) throws JsonIOException, IOException {
-		List<Reply> replyList = replyRepository.findBybNo(board.getBNo());
+		List<Reply> replyList = replyRepository.findByBoardNo(board.getBoardNo());
 		response.setContentType("application/json; charset=utf-8");
 		Gson gson = new Gson();
 		gson.toJson(replyList, response.getWriter());
@@ -100,9 +128,9 @@ public class BoardController {
 	public String addReply(Reply reply) {
 		Reply r = replyRepository.save(reply);
 		if(r != null) {
-			Optional<Board> b = boardRepository.findById(reply.getBNo());
+			Optional<Board> b = boardRepository.findById(reply.getBoardNo());
 			b.ifPresent(countPlusB ->{
-				countPlusB.setBReply(b.get().getBReply()+1);
+				countPlusB.setBoardReply(b.get().getBoardReply()+1);
 				boardRepository.save(countPlusB);
 			});
 			return "success";
@@ -113,12 +141,12 @@ public class BoardController {
 	@PostMapping("/view")
 	public ModelAndView veiwDetail(HttpSession session, ModelAndView mv, Board board) {
 		Member user = (Member)session.getAttribute("loginUser");
-		Optional<Board> b = boardRepository.findById(board.getBNo());
+		Optional<Board> b = boardRepository.findById(board.getBoardNo());
 		b.ifPresent(countPlusB ->{
-			countPlusB.setBViewCnt(b.get().getBViewCnt()+1);
+			countPlusB.setBoardViewCnt(b.get().getBoardViewCnt()+1);
 			Board updatedBoard = boardRepository.save(countPlusB);
 			mv.addObject("board", updatedBoard);
-			Optional<Like> like = likeRepository.findById(new LikePK(board.getBNo(), user.getId()));
+			Optional<Like> like = likeRepository.findById(new LikePK(board.getBoardNo(), user.getId()));
 			if(like.isPresent()) {
 				mv.addObject("isLike", true);
 			} else {
@@ -141,11 +169,29 @@ public class BoardController {
 	}
 	
 	@ResponseBody
+	@PostMapping("/modifyReply")
+	public String modifyReply(Reply reply) {
+		Optional<Reply> r = replyRepository.findById(reply.getReplyNo());
+		if(r.isPresent()) {
+			Reply updateR = r.get();
+			updateR.setReplyContent(reply.getReplyContent());
+			Reply updatedReply = replyRepository.save(updateR);
+			if(updatedReply != null) {
+				return "success";
+			} else {
+				return "fail";
+			}
+		} else {
+			return "fail";
+		}
+	}
+	
+	@ResponseBody
 	@PostMapping("/likeCount")
 	public Long likeCount(Long bNo, Long count, LikePK likePk, boolean plus) {
 		Optional<Board> b = boardRepository.findById(bNo);
 		b.ifPresent(countPlusB ->{
-			countPlusB.setBLike(count);
+			countPlusB.setBoardLike(count);
 			boardRepository.save(countPlusB);
 		});
 		if(plus == true) {	// 좋아요+1 일때

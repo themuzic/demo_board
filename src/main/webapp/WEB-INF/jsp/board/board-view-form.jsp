@@ -45,17 +45,17 @@
 	<jsp:include page="../header/header.jsp"/>
 	<div id="write-outer">
 		<form class="ui form" id="board-view-form" action="/modify" method="POST">
-			<input type="hidden" name="bNo" value="${board.BNo}">
-			<input type="hidden" name="wId" value="${board.WId}">
-			<input type="hidden" name="wName" value="${board.WName}">
+			<input type="hidden" name="boardNo" value="${board.boardNo}">
+			<input type="hidden" name="writerId" value="${board.writerId}">
+			<input type="hidden" name="writerName" value="${board.writerName}">
 			<h4 class="ui dividing header" style="padding-bottom: 1em;">
-				<span style="font-size: 18px;">${board.BTitle}</span>
-				<span class="fr" style="font-size: 14px;">${fn:replace(board.BDate,"T"," ")}</span>
+				<span style="font-size: 18px;">${board.boardTitle}</span>
+				<span class="fr" style="font-size: 14px;">${fn:replace(board.boardDate,"T"," ")}</span>
 				<br style="clear:both;">
-				<span class="nameLine">${board.WName}</span>
-				<span class="nameLine fr">조회수&nbsp;&nbsp;&nbsp;&nbsp;${board.BViewCnt}</span>
+				<span class="nameLine">${board.writerName}</span>
+				<span class="nameLine fr">조회수&nbsp;&nbsp;&nbsp;&nbsp;${board.boardViewCnt}</span>
 			</h4>
-			${board.BContent}
+			${board.boardContent}
 			<hr style="border-top: 1px solid rgba(34, 36, 38, 0.15);">
 		</form>
 			<!----------------------------------------------------------->
@@ -63,21 +63,24 @@
 			<div class="ui comments" id="replyDiv"></div>
 			<!-- 댓글 입력 textarea -->
 			<form class="ui reply form" id="addReplyForm">
-				<input type="hidden" name="wId" value="${loginUser.id}">
-				<input type="hidden" name="wName" value="${loginUser.name}">
-				<input type="hidden" name="rLevel" value="0">
+				<input type="hidden" name="writerId" value="${loginUser.id}">
+				<input type="hidden" name="writerName" value="${loginUser.name}">
+				<input type="hidden" name="replyLevel" value="0">
 			  <div class="field" style="margin-bottom: 0.5em;">
-			    <textarea id="replyArea" name="rContent" style="height: 8em;"></textarea>
+			    <textarea id="replyArea" name="replyContent" style="height: 8em;"></textarea>
 			  </div>
 			  <div class="ui primary button add-reply-btn" id="">Add Reply</div>
 			</form>
 			
 			<!----------------------------------------------------------->
-			<c:if test="${board.WId eq loginUser.id}">
-				<div align="center">
-					<div class="ui primary button" id="board-modify-btn" tabindex="0">Modify</div>
-					<div class="ui button" id="board-remove-btn" tabindex="0">Remove</div>
-				</div>
+			<c:if test="${board.writerId eq loginUser.id}">
+				<form id="board-remove-form" action="/remove" method="post">
+					<div align="center">
+						<input type="hidden" name="boardNo" value="${board.boardNo}">
+						<div class="ui primary button" id="board-modify-btn" tabindex="0">Modify</div>
+						<div class="ui button" id="board-remove-btn" tabindex="0">Remove</div>
+					</div>
+				</form>
 			</c:if>
 	</div>
 </body>
@@ -93,7 +96,7 @@
 	});
 	/* 삭제버튼 */
 	$(document).on('click','#board-remove-btn',function(){
-		location.href="/";
+		$('#board-remove-form').submit();
 	});
 	/* 대댓글 입력창 열기 */
 	$(document).on('click','.openReplyField',function(){
@@ -118,12 +121,67 @@
 		}
 		likeCount(count, plus);
 	});
+	/* 댓글 수정 버튼 누르면 */
+	$(document).on('click','.replyModify',function(){
+		var originText = $(this).parent().prev().text();
+		var originHtml = $(this).parents('.text').html();
+		
+		var form = '<form class="ui form" name="replyModifyForm"><div class="field" style="margin-bottom: 0.5em;">';
+		form += '<input type="hidden" name="replyNo">';
+		form += '<textarea name="replyContent" style="height: 8em;">';
+		form += originText;
+		form += '</textarea></div><div class="ui primary button modify-reply-btn">Modify</div>';
+		form += '<div class="ui button modify-cancel-btn">Cancel</div></form>';
+		$(this).parents('.text').html(form);
+	});
+	/* 댓글 수정 하기 */
+	$(document).on('click','.modify-reply-btn',function(){
+		var replyNo = $(this).parents('.text').prev().find('input').val();
+		var originText = $(this).siblings('.field').find('textarea').val();
+		var formData = new FormData();
+		formData.append('replyNo', replyNo);
+		formData.append('replyContent', originText);
+		console.log(replyNo);
+		console.log(originText);
+		console.log(formData);
+		$.ajax({
+			url:"/modifyReply",
+			type:"post",
+			data:formData,
+			contentType:false,
+			processData:false,
+			success:function(data){
+				if(data == 'success'){
+					getReplyList();
+				} else {
+					alertify.alert('', 'Reply Modify failed');
+				}
+			},
+			error:function(){
+				alertify.alert('', 'Server connection failed');
+			}
+		});
+	});	
+	/* 댓글 수정 취소 */
+	$(document).on('click','.modify-cancel-btn',function(){
+		var originText = $(this).siblings('.field').find('textarea').text();
+		
+		var form = '<p class="fl" style="margin: 0 0 5px;">';
+		form += originText;
+		form += '</p><div class="actions fr" id="62"><a class="reply replyModify">Modify</a>';
+		form += '<a class="reply replyRemove">Remove</a></div>';
+		$(this).parents('.text').html(form);
+	});
+	/* 댓글 삭제 버튼 누르면 */
+	$(document).on('click','.replyRemove',function(){
+		
+	});
 	/* 좋아요 ajax */
 	function likeCount(count, plus){		
 		$.ajax({
 			url:"/likeCount",
 			type:"POST",
-			data:{bNo:${board.BNo},
+			data:{boardNo:${board.boardNo},
 				  id:'${loginUser.id}',
 				  count:count,
 				  plus:plus},
@@ -141,7 +199,6 @@
 			}
 		});
 	}	
-	
 	/* 댓글 작성하기 */
 	$(document).on('click','.add-reply-btn',function(){
 		var replyContent = $(this).prev().children('textarea');
@@ -151,13 +208,13 @@
 		} else{
 			var formData = new FormData();
 			var obj = this.parentNode;
-			formData.append('bNo', ${board.BNo});
-			formData.append('wId', obj.wId.value);
-			formData.append('wName', obj.wName.value);
-			formData.append('rLevel', obj.rLevel.value);
-			formData.append('rContent', obj.rContent.value);
+			formData.append('boardNo', ${board.boardNo});
+			formData.append('writerId', obj.writerId.value);
+			formData.append('writerName', obj.writerName.value);
+			formData.append('replyLevel', obj.replyLevel.value);
+			formData.append('replyContent', obj.replyContent.value);
 			if(obj.rrNo != undefined){
-				formData.append('rrNo', obj.rrNo.value);
+				formData.append('rreplyNo', obj.rreplyNo.value);
 			}
 			
 			$.ajax({
@@ -176,8 +233,8 @@
 						socket.send(JSON.stringify({
 							cmd:'reply',
 							replyWriter:'${loginUser.name}',
-							boardWriter:'${board.WId}',
-							bno:${board.BNo}
+							boardWriter:'${board.writerId}',
+							boardNo:${board.boardNo}
 						}));
 						
     				} else{
@@ -193,21 +250,20 @@
 	/* 대댓글이 있는지 찾아서 있으면 뷰 만들어서 보여주기 */
 	function findReply(reply, replyList, $divComment) {
 		$.each(replyList, function(index, r){
-			if(r.rLevel == 1 && reply.rNo == r.rrNo){
-				var $divReply = makeReplyView(reply.wName, r);
+			if(r.replyLevel == 1 && reply.replyNo == r.rreplyNo){
+				var $divReply = makeReplyView(reply.writerName, r);
 				findReply(r, replyList, $divComment).append($divReply);
 			}
 		});
 		return $divComment;
 	}
-	
 	/* 해당 게시글의 댓글 목록 불러와서 보여주기*/
 	function getReplyList(){
-		var bNo= ${board.BNo};
+		var boardNo= ${board.boardNo};
 		$.ajax({
 			url:"/getReplyList",
 			type:"POST",
-			data:{bNo:bNo},
+			data:{boardNo:boardNo},
 			dataType:"json",
 			success:function(replyList){
 			 	var $replyDiv = $('#replyDiv');
@@ -222,7 +278,7 @@
 				}
 			 	
 				var $iconLike = $('<i class="heart icon">');
-				var $spanLike = $('<span class="likeBlack" id="likeCount">').text('${board.BLike}');
+				var $spanLike = $('<span class="likeBlack" id="likeCount">').text('${board.boardLike}');
 			 	$aLike.append($iconLike);
 			 	$aLike.append($spanLike);
 				
@@ -237,12 +293,12 @@
 						var $divComment0;
 						var $divComment1;
 						var $divComment2;
-						if(reply.rLevel == 0){
+						if(reply.replyLevel == 0){
 							$divComment0 = makeReplyView("", reply);
 							$.each(replyList, function(index1, reply1){
-								if(reply1.rLevel == 1 && reply.rNo == reply1.rrNo){
+								if(reply1.replyLevel == 1 && reply.replyNo == reply1.rreplyNo){
 									var $divComments1 = $('<div class="comments">');
-									$divComment1 = makeReplyView(reply.wName, reply1);
+									$divComment1 = makeReplyView(reply.writerName, reply1);
 									$divComments1.append($divComment1);
 									
 									$divComment2 = findReply(reply1, replyList, $divComments1);
@@ -263,27 +319,28 @@
 			}
 		});
 	}
-	
 	/* 댓글 한개 뷰 만들기 */
 	function makeReplyView(name, reply) {
 		var $divComment = $('<div class="comment">');
 		var $divContent = $('<div class="content">');
-		var $bName = $('<b>').text(reply.wName);
+		var $bName = $('<b>').text(reply.writerName);
 		$divContent.append($bName);
 		var $divMetadata = $('<div class="metadata">');
-		if(reply.rLevel == 1){
+		if(reply.replyLevel == 1){
 			var $to = $('<span class="date">').text(name+"에게 답글");
 			$divMetadata.append($to);
 		}
-		var date = reply.rDate.date.year+'-'+reply.rDate.date.month+'-'+reply.rDate.date.day+' '
-					+reply.rDate.time.hour+':'+reply.rDate.time.minute+':'+reply.rDate.time.second;
+		var date = reply.replyDate.date.year+'-'+reply.replyDate.date.month+'-'+reply.replyDate.date.day+' '
+					+reply.replyDate.time.hour+':'+reply.replyDate.time.minute+':'+reply.replyDate.time.second;
 		var $spanDate = $('<span class="date">').text(date);
+		var $spanReplyNo = $('<input type="hidden" name="replyNo">').val(reply.replyNo);
 		$divMetadata.append($spanDate);
+		$divMetadata.append($spanReplyNo);
 		
 		var $divText = $('<div class="text">');
-		if(reply.wId == ${loginUser.id}){
-			var $pContent = $('<p class="fl" style="margin: 0 0 5px;">').text(reply.rContent);
-			var $divBtns = $('<div class="actions fr" id="'+ reply.rNo +'">');
+		if(reply.writerId == ${loginUser.id}){
+			var $pContent = $('<p class="fl" style="margin: 0 0 5px;">').text(reply.replyContent);
+			var $divBtns = $('<div class="actions fr" id="'+ reply.replyNo +'">');
 			var $aModify = $('<a class="reply replyModify">').text('Modify');
 			var $aRemove = $('<a class="reply replyRemove">').text('Remove');
 			
@@ -292,18 +349,18 @@
 			$divText.append($pContent);
 			$divText.append($divBtns);
 		} else {
-			var $pContent = $('<p>').text(reply.rContent);
+			var $pContent = $('<p>').text(reply.replyContent);
 			$divText.append($pContent);
 		}
 		var $divActions = $('<div class="actions" style="clear: both">');
 		var $aReply = $('<a class="reply openReplyField">').text("Reply");
 		var $formReply = $('<form class="ui reply form re-reply-form" style="display: none;">');
-		var $hidden1 = $('<input type="hidden" name="wId" value="'+${loginUser.id}+'">');
-		var $hidden2 = $('<input type="hidden" name="wName" value="'+'${loginUser.name}'+'">');
-		var $hidden3 = $('<input type="hidden" name="rLevel" value="1">');
-		var $hidden4 = $('<input type="hidden" name="rrNo" value="'+reply.rNo+'">');
+		var $hidden1 = $('<input type="hidden" name="writerId" value="'+${loginUser.id}+'">');
+		var $hidden2 = $('<input type="hidden" name="writerName" value="'+'${loginUser.name}'+'">');
+		var $hidden3 = $('<input type="hidden" name="replyLevel" value="1">');
+		var $hidden4 = $('<input type="hidden" name="rreplyNo" value="'+reply.replyNo+'">');
 		var $divReplyField = $('<div class="field" style="margin-bottom: 0.5em;">');
-		var $textArea = $('<textarea name="rContent" style="min-height: 4em; height: 4em;">');
+		var $textArea = $('<textarea name="replyContent" style="min-height: 4em; height: 4em;">');
 		var $addBtn = $('<div class="ui primary button add-reply-btn">').text('Add Reply');
 		
 		$divReplyField.append($textArea);

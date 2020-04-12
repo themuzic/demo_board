@@ -49,7 +49,6 @@ public class MemberController {
 	public void join(Member member, HttpServletResponse response) {
 		try {
 			memberRepository.save(member);
-			System.out.println("회원가입완료");
 			response.sendRedirect("/");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -95,7 +94,6 @@ public class MemberController {
 	public void logout(SessionStatus status, HttpServletResponse response) {	// SessionStatus : 세션의 상태를 관리하는 객체
 		try {
 			status.setComplete();
-			System.out.println("로그아웃");
 			response.sendRedirect("/");
 		} catch (IOException e) {
 			e.printStackTrace();

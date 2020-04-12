@@ -19,16 +19,16 @@
 	<jsp:include page="../header/header.jsp"/>
 	<div id="write-outer">
 		<form id="update-form" action="/update" method="POST">
-			<input type="hidden" name="bNo" value="${board.BNo}">
-			<input type="hidden" name="wId" value="${board.WId}">
-			<input type="hidden" name="wName" value="${board.WName}">
-			<%-- <input type="hidden" name="bDate" value="${fn:replace(board.BDate,'T',' ')}"> --%>
+			<input type="hidden" name="boardNo" value="${board.boardNo}">
+			<input type="hidden" name="writerId" value="${board.writerId}">
+			<input type="hidden" name="writerName" value="${board.writerName}">
+			<%-- <input type="hidden" name="boardDate" value="${fn:replace(board.boardDate,'T',' ')}"> --%>
 			<label>제목</label><br>
 			<div class="ui input">
-				<input type="text" name="bTitle" style="height: 30px; width: 689px;" value="${board.BTitle}">
+				<input type="text" name="boardTitle" style="height: 30px; width: 689px;" value="${board.boardTitle}">
 			</div><br><br>		
 			<label>내용</label><br>
-			<textarea id="summernote" class="summernote" name="bContent" value=""></textarea>
+			<textarea id="summernote" class="summernote" name="boardContent" value=""></textarea>
 			<div align="center">
 				<div class="ui primary button" id="update-submit-btn" tabindex="0">Modify</div>
 				<div class="ui button" id="update-cancel-btn" tabindex="0">Cancel</div>
@@ -45,8 +45,8 @@
 	        lang: 'ko-KR'
 		});
 		$('.dropdown-toggle').dropdown();
-		
-		$("#summernote").summernote('code','${board.BContent}');
+		/* 썸머노트에 원래 글 내용 띄우기 */
+		$("#summernote").summernote('code','${board.boardContent}');
 	});
 	
 	$(document).on('click','#update-submit-btn',function(){
@@ -62,13 +62,13 @@
 	function checkWriteForm() {
 		var obj = document.getElementById('update-form');
 		
-		if(obj.bTitle.value == ""){
-			obj.bTitle.focus();
+		if(obj.boardTitle.value == ""){
+			obj.boardTitle.focus();
 			alertify.alert('','Title is empty');
 			return false;
 		}
-		if(obj.bContent.value == "") {
-			obj.bContent.focus();
+		if(obj.boardContent.value == "") {
+			obj.boardContent.focus();
 			alertify.alert('','Content is empty');
 			return false;
 		}

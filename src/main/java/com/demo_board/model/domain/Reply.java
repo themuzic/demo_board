@@ -36,42 +36,30 @@ public class Reply {
 			strategy = GenerationType.SEQUENCE,		// 사용할 전략을 시퀀으로 선택
 			generator = "REPLY_SEQ_GEN"				// 식별자 생성기를 만들어 놓은 시퀀스 제네레이터로 설정
 			)
-	private Long rNo;
+	private Long replyNo;
 	@Column(nullable = false, name = "b_no")
-	private Long bNo;
+	private Long boardNo;
 	@Column(nullable = false, name = "w_id")
-	private Long wId;
+	private Long writerId;
 	@Column(nullable = false, name = "w_name")
-	private String wName;
+	private String writerName;
 	@Column(nullable = false, name = "r_content")
-	private String rContent;
+	private String replyContent;
 	@Column(nullable = false, name = "r_date")
-	private LocalDateTime rDate;
+	private LocalDateTime replyDate;
 	@Column(nullable = false, name = "r_status")
-	private String rStatus;
+	private String replyStatus;
 	@Column(nullable = false, name = "r_level")
-	private int rLevel;
+	private int replyLevel;
 	@Column(name = "rr_no")
-	private Long rrNo;
-	
-	public Reply(Long bNo, Long wId, String wName, String rContent, LocalDateTime rDate, String rStatus,
-			int rLevel) {
-		super();
-		this.bNo = bNo;
-		this.wId = wId;
-		this.wName = wName;
-		this.rContent = rContent;
-		this.rDate = rDate;
-		this.rStatus = rStatus;
-		this.rLevel = rLevel;
-	}
+	private Long rreplyNo;
 	
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		this.rDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
-		this.rStatus = "Y";
+		this.replyDate = LocalDateTime.parse(now.format(dateTimeFormatter),dateTimeFormatter);
+		this.replyStatus = "Y";
 	}
 	
 }

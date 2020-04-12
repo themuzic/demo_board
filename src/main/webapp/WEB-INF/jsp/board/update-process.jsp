@@ -10,7 +10,7 @@
 </head>
 <body>
 	<form id="process-form" action="/view" method="POST">
-		<input type="hidden" name="bNo" value="${board.BNo}">
+		<input type="hidden" name="boardNo" value="${board.boardNo}">
 	</form>
 </body>
 <script>

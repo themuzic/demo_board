@@ -17,14 +17,14 @@
 	<jsp:include page="../header/header.jsp"/>
 	<div id="write-outer">
 		<form id="write-form" action="/insert" method="POST">
-			<input type="hidden" name="wId" value="${loginUser.id}">
-			<input type="hidden" name="wName" value="${loginUser.name}">
+			<input type="hidden" name="writerId" value="${loginUser.id}">
+			<input type="hidden" name="writerName" value="${loginUser.name}">
 			<label>제목</label><br>
 			<div class="ui input">
-				<input type="text" name="bTitle" style="height: 30px; width: 689px;">
+				<input type="text" name="boardTitle" style="height: 30px; width: 689px;">
 			</div><br><br>		
 			<label>내용</label><br>
-			<textarea id="summernote" class="summernote" name="bContent" value=""></textarea>
+			<textarea id="summernote" class="summernote" name="boardContent" value=""></textarea>
 			<div align="center">
 				<div class="ui primary button" id="write-submit-btn" tabindex="0">Write</div>
 				<div class="ui button" id="write-cancel-btn" tabindex="0">Cancel</div>
@@ -70,13 +70,13 @@
 	function checkWriteForm() {
 		var obj = document.getElementById('write-form');
 		
-		if(obj.bTitle.value == ""){
-			obj.bTitle.focus();
+		if(obj.boardTitle.value == ""){
+			obj.boardTitle.focus();
 			alertify.alert('','Title is empty');
 			return false;
 		}
-		if(obj.bContent.value == "") {
-			obj.bContent.focus();
+		if(obj.boardContent.value == "") {
+			obj.boardContent.focus();
 			alertify.alert('','Content is empty');
 			return false;
 		}

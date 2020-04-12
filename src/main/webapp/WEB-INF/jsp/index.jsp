@@ -84,30 +84,30 @@ thead tr {height: 45px;}
 				<c:if test="${boardList ne '[]'}">
 					<c:forEach var="board" items="${boardList}">
 						<tr>
-							<td>${board.BNo}</td>
+							<td>${board.boardNo}</td>
 							<td style="text-align: left; padding-left: 40px; padding-right: 40px;">
 								<c:if test="${empty loginUser}">
-									<c:if test="${board.BReply eq '0'}">
-										${board.BTitle}
+									<c:if test="${board.boardReply eq '0'}">
+										${board.boardTitle}
 									</c:if>
-									<c:if test="${board.BReply ne '0'}">
-										${board.BTitle} <b style="color:red;">[${board.BReply}]</b>
+									<c:if test="${board.boardReply ne '0'}">
+										${board.boardTitle} <b style="color:red;">[${board.boardReply}]</b>
 									</c:if>
 								</c:if>
 								<c:if test="${!empty loginUser}">
-									<c:if test="${board.BReply eq '0'}">
-										<a href="javascript:viewDetail(${board.BNo});">${board.BTitle}</a>
+									<c:if test="${board.boardReply eq '0'}">
+										<a href="javascript:viewDetail(${board.boardNo});">${board.boardTitle}</a>
 									</c:if>
-									<c:if test="${board.BReply ne '0'}">
-										<a href="javascript:viewDetail(${board.BNo});">${board.BTitle}</a> <b style="color:red;">[${board.BReply}]</b>
+									<c:if test="${board.boardReply ne '0'}">
+										<a href="javascript:viewDetail(${board.boardNo});">${board.boardTitle}</a> <b style="color:red;">[${board.boardReply}]</b>
 									</c:if>
 									
 								</c:if>
 							</td>
-							<td>${board.WName}</td>
-							<td>${fn:replace(board.BDate,"T"," ")}</td>
-							<td>${board.BLike}</td>
-							<td>${board.BViewCnt}</td>
+							<td>${board.writerName}</td>
+							<td>${fn:replace(board.boardDate,"T"," ")}</td>
+							<td>${board.boardLike}</td>
+							<td>${board.boardViewCnt}</td>
 						</tr>
 					</c:forEach>
 				</c:if >
@@ -117,7 +117,7 @@ thead tr {height: 45px;}
 	
 	<div id="footer">
 		<form name="viewDetailForm">
-			<input type="hidden" name="bNo">
+			<input type="hidden" name="boardNo">
 		</form>
 		<table id="bottom">
 			<colgroup>
@@ -224,9 +224,9 @@ thead tr {height: 45px;}
 		}
 	});
 	/* 게시글 상세 페이지로 이동하는 함수 */
-	function viewDetail(b_no) {
+	function viewDetail(boardNo) {
 		var f = document.viewDetailForm;
-		f.bNo.value = b_no;
+		f.boardNo.value = boardNo;
 		f.action = "/view";
 		f.method = "post";
 		f.submit();

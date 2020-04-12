@@ -16,9 +16,10 @@ public class BoardService {
 	@Autowired
 	private BoardRepository boardRepository;
 	
+	private String boardStatus = "Y";
 	public ModelAndView boardPaging(int pageNum, ModelAndView mv) {
-		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "bDate");
-		Page<Board> boardList = boardRepository.findAll(pageable);
+		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "boardDate");
+		Page<Board> boardList = boardRepository.findByBoardStatus(boardStatus, pageable);
 		int startPage = pageNum/5+1;
 		int lastPage = pageNum/5+5;
 		int totalPages = boardList.getTotalPages();
@@ -40,17 +41,17 @@ public class BoardService {
 	}
 	
 	public ModelAndView searchBoards(int pageNum, String condition1, String condition2, ModelAndView mv) {
-		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "bDate");
+		Pageable pageable = PageRequest.of(pageNum, 10, Direction.DESC, "boardDate");
 		Page<Board> boardList;
 		if(condition1.equals("title")) {
-			String bTitle = condition2;
-			boardList = boardRepository.findBybTitleContaining(bTitle, pageable);
+			String boardTitle = condition2;
+			boardList = boardRepository.findByBoardTitleContainingAndBoardStatusLike(boardTitle, boardStatus, pageable);
 		} else if(condition1.equals("writer")) {
-			String wName = condition2;
-			boardList = boardRepository.findBywNameContaining(wName, pageable);
+			String writerName = condition2;
+			boardList = boardRepository.findByWriterNameContainingAndBoardStatusLike(writerName, boardStatus, pageable);
 		} else {	// (condition1.equals("content")
-			String bContent = condition2;
-			boardList = boardRepository.findBybContentContaining(bContent, pageable);
+			String boardContent = condition2;
+			boardList = boardRepository.findByBoardContentContainingAndBoardStatusLike(boardContent, boardStatus, pageable);
 		}
 		int startPage = pageNum/5+1;
 		int lastPage = pageNum/5+5;
