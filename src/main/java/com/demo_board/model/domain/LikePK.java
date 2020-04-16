@@ -1,18 +1,15 @@
 package com.demo_board.model.domain;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Setter
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable

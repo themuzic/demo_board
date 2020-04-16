@@ -5,14 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Setter
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

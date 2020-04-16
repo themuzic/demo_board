@@ -12,14 +12,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Setter
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -54,7 +50,7 @@ public class ImgFile {
 		this.originImgName = originImgName;
 		this.changeImgName = changeImgName;
 	}
-	
+
 	@PrePersist		// insert 되기 직전 호출 되는 어노테이션
 	public void prePersist() {
 		LocalDateTime now = LocalDateTime.now();  
